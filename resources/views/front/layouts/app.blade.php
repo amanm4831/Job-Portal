@@ -102,7 +102,7 @@
     var formData = new FormData(this);
 
     $.ajax({
-        url: '{{ route('account.updateProfilePic') }}',  // Ensure this route is correctly defined
+        url: '{{ route('account.updateProfilePic') }}',  
         type: 'POST',
         data: formData,
         dataType: 'json',
@@ -112,16 +112,12 @@
             if (response.status === false) {
                 var errors = response.errors;
                 if (errors.image) {
-                    $('#image-error').html(errors.image);  // Correct error display handling
+                    $('#image-error').html(errors.image);  
                 }
             } else {
                 window.location.href = '{{url()->current()}}';
             }
         },
-        error: function(xhr) {
-            // Handle AJAX request error
-            alert('An error occurred. Please try again.');
-        }
     });
 });
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use File;
 use Hash;
 use session;
 use Validator;
@@ -176,27 +177,33 @@ class AccountController extends Controller
             $ext = $image->getClientOriginalExtension();
             $imageName = $id . '-' . time() . '.' . $ext;
             $image->move(public_path('profile_pic'), $imageName);
+            File::delete(public_path('profile_pic/'.Auth::user()->image));
             User::where('id', $id)->update(['image' => $imageName]);
-
-            $sourcePath = public_path('profile_pic'.$imageName);
-            $manager = new ImageManager(Driver::class);
-            $image = $manager->read($sourcePath);
-
-            // crop the best fitting 5:3 (600x360) ratio and resize to 600x360 pixel
-            $image->cover(150, 150);
-            $image->toPng()->save(public_path('profile_pic/thumb'.$imageName));
-
 
             session()->flash('success', 'image upload successful');
             return response()->json([
                 'status' => true,
                 'errors' => [],
             ]);
+
+            // $sourcePath = public_path('profile_pic'.$imageName);
+            // $manager = new ImageManager(Driver::class);
+            // $image = $manager->read($sourcePath);
+
+            // $image->cover(150, 150);
+            // $image->toPng()->save(public_path('profile_pic/thumb'.$imageName));
+
+
+            
         } else {
             return response()->json([
                 'status' => false,
                 'errors' => $validator->errors(),
             ]);
         }
+    }
+
+    public function createJob(){
+        return view('front.account.job.create');
     }
 }
