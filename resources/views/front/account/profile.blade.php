@@ -90,7 +90,7 @@
             dataType: 'json',
             data: $('#userForm').serialize(),
             success: function(response){
-                if(response.status == 'true'){
+                if(response.status == true){
                     // Clear previous error messages
                     $(".form-control").removeClass('is-invalid');
                     $("p").removeClass('invalid-feedback').html('');

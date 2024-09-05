@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Job;
+use App\Models\JobTypes;
 use Auth;
 use File;
 use Hash;
@@ -204,6 +207,63 @@ class AccountController extends Controller
     }
 
     public function createJob(){
-        return view('front.account.job.create');
+
+        $categories = Category::orderBy('name', 'ASC')->where('status', 1)->get();
+        $jobTypes = JobTypes::orderBy('name', 'ASC')->where('status', 1)->get();
+        return view('front.account.job.create', [
+            'categories' => $categories,
+            'jobTypes' => $jobTypes,
+        ]);
+    }
+
+    public function saveJob(Request $request) {
+        $rules = [
+            'title' => 'required|max:200',
+            'category' => 'required',
+            'jobType' => 'required',
+            'vacancy' => 'required|integer',
+            'location' => 'required|max:20',
+            'description' => 'required|max:200',
+            'experience' => 'required',
+            'company_name' => 'required|max:80',
+        ]; 
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if($validator->passes()){
+            $job = new Job();
+            $job->title = $request->title;
+            $job->category_id = $request->category;
+            $job->job_types_id = $request->jobType;
+            $job->user_id = Auth::user()->id;
+            $job->vacancy = $request->vacancy;
+            $job->salary = $request->salary;
+            $job->location = $request->location;
+            $job->description = $request->description;
+            $job->benefits = $request->benefits;
+            $job->responsibility = $request->responsibility;
+            $job->qualification = $request->qualifications;
+            $job->keywords = $request->keywords;
+            $job->experience = $request->experience;
+            $job->company_name = $request->company_name;
+            $job->company_location = $request->location;
+            $job->company_website = $request->website;
+            $job->save();
+
+            session()->flash('success', 'Job has been posted');
+            return response()->json([
+                'status' => true,
+                'errors' => [],
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ]);
+        }
+    }
+
+    public function myJobs(){
+        return view('front.account.job.my-jobs');
     }
 }
