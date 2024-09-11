@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\JobsController;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -21,7 +22,8 @@ use App\Http\Controllers\AccountController;
 // });
 
 Route::get('/', [HomeController::class, 'index'])->name("home");
-
+Route::get('/jobs', [JobsController::class, 'index'])->name('jobs');
+Route::get('/jobs/detail/{id}', [JobsController::class, 'details'])->name('jobs.detail');
 
 
 
@@ -63,6 +65,5 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/delete-job', [AccountController::class, 'deleteJob'])->name('account.deleteJob');
 
-   
 });
 
