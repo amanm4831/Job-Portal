@@ -84,7 +84,12 @@
                             </div>
                             <div class="border-bottom"></div>
                             <div class="pt-3 text-end">
-                                <a href="#" class="btn btn-secondary">Save</a>
+                                @if (Auth::check())
+                                <a href="#" onclick="applyJob({{$jobDetails->id}})" class="btn btn-primary">Save</a>
+                                @else
+                                <a href="javascript:void(0)" class="btn btn-primary disabled">Login To Save</a>
+                                @endif
+                                {{-- <a href="#" class="btn btn-secondary">Save</a> --}}
                                 @if (Auth::check())
                                 <a href="#" onclick="applyJob({{$jobDetails->id}})" class="btn btn-primary">Apply</a>
                                 @else
