@@ -66,5 +66,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/delete-job', [AccountController::class, 'deleteJob'])->name('account.deleteJob');
 
+    Route::get('/my-job-applications', [JobsController::class, 'myJobApplications'])->name('account.jobApplications');
+
+    Route::post('/remove-job', [AccountController::class, 'removeJobs'])->name('account.removeJobs');
+
+
 });
 

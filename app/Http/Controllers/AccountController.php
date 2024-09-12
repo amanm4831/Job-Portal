@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Job;
+use App\Models\JobApplication;
 use App\Models\JobTypes;
 use Auth;
 use File;
@@ -353,6 +354,22 @@ class AccountController extends Controller
         session()->flash('success', 'Job deleted successfully');
         return response()->json([
             'status' => true,
+        ]);
+    }
+
+    public function removeJobs(Request $request){
+        $JobApplication = JobApplication::where(['id'=> $request->id, 'user_id'=>Auth::user()->id])->first();
+
+        if($JobApplication == null){
+            session()->flash('error', 'Job not found');
+            return response()->json([
+                'status'=> false,
+            ]);
+        }
+        JobApplication::find($request->id)->delete();
+        session()->flash('success', 'Job has been removed successfully.');
+        return response()->json([
+            'status'=>true,
         ]);
     }
 }
