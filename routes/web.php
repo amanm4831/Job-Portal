@@ -24,6 +24,7 @@ use App\Http\Controllers\AccountController;
 Route::get('/', [HomeController::class, 'index'])->name("home");
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs');
 Route::get('/jobs/detail/{id}', [JobsController::class, 'details'])->name('jobs.detail');
+Route::post('/apply-job', [JobsController::class, 'applyJob'])->name('jobs.apply');
 
 
 
