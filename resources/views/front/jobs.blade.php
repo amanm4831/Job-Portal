@@ -7,18 +7,8 @@
                 <div class="col-6 col-md-10 ">
                     <h2>Find Jobs</h2>
                 </div>
-                {{-- <div class="col-6 col-md-2">
-                    <div class="align-end">
-                        <select name="sort" id="sort" class="form-control">
-                            <option value="1">Latest</option>
-                            <option value="0">Oldest</option>
-                        </select>
-                    </div>
-                </div> --}}
             </div>
-            
             <div class="row pt-5">
-                <!-- Sidebar - Search Form (3 columns) -->
                 <div class="col-md-4 col-lg-3 sidebar mb-4">
                     <form action="" method="GET" name="searchForm" id="searchForm">
                         <div class="card border-0 shadow p-4">
@@ -67,14 +57,11 @@
                                     <option value="10_plus" {{ (Request::get('experience') == '10_plus') ? 'selected' : '' }}>10+ Years</option>
                                 </select>
                             </div>
-
                             <button type="submit" class="btn btn-primary">Search</button>
                             <a href="{{route('jobs')}}" class="btn btn-secondary mt-2">Reset</a>
                         </div>
                     </form>
                 </div>
-
-                <!-- Job Listings (9 columns) -->
                 <div class="col-md-8 col-lg-9">
                     <div class="job_listing_area">
                         <div class="job_lists">
@@ -124,7 +111,7 @@
 @section('javascript')
 <script>
     $("#searchForm").submit(function(e){
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault();
 
         var url = "{{ route('jobs') }}";
         

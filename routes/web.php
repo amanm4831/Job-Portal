@@ -25,6 +25,7 @@ Route::get('/', [HomeController::class, 'index'])->name("home");
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs');
 Route::get('/jobs/detail/{id}', [JobsController::class, 'details'])->name('jobs.detail');
 Route::post('/apply-job', [JobsController::class, 'applyJob'])->name('jobs.apply');
+Route::post('/saveJobs', [JobsController::class, 'saveJobs'])->name('jobs.save');
 
 
 
@@ -70,6 +71,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/remove-job', [AccountController::class, 'removeJobs'])->name('account.removeJobs');
 
+    Route::get('/saved-jobs', [AccountController::class, 'savedJobs'])->name('account.savedJobs');
+
+    Route::post('/remove-saved-job', [AccountController::class, 'removeSavedJob'])->name('account.removeSavedJob');
 
 });
 

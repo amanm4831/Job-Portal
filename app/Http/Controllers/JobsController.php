@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Job;
 use App\Models\JobApplication;
 use App\Models\JobTypes;
+use App\Models\SavedJob;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
@@ -69,8 +70,22 @@ class JobsController extends Controller
         if ($jobDetails == null) {
             abort(404);
         }
+        $count=0;
+        if(Auth::user()){
+            $count = SavedJob::where([
+                'user_id' => Auth::user()->id,
+                'job_id' => $id,
+            ])->count();
+        }
+
+        $jobApplicants = JobApplication::where('job_id', $id)->with('user')->get();
+
+        // dd($jobApplicants);
+        
         return view('front.jobDetail', [
             'jobDetails' => $jobDetails,
+            'count' => $count,
+            'jobApplicants' => $jobApplicants,
         ]);
     }
 
@@ -234,6 +249,45 @@ class JobsController extends Controller
         // dd($jobs);
         return view('front.account.my-jobs-application', [
             'jobApplications' => $jobApplications,
+        ]);
+    }
+
+    public function saveJobs(Request $request){
+        if (!Auth::check()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'You need to be logged in to apply for a job.',
+            ]);
+        }
+        $id = $request->id;
+        $Job = Job::find($id);
+        if($Job == null){
+            return response()->json([
+                'status' => false,
+                'message' => 'Job not found',
+            ]);
+        }
+
+        $count = SavedJob::where([
+            'user_id' => Auth::user()->id,
+            'job_id' => $id,
+        ])->count();
+
+        if($count>0){
+            return response()->json([
+                'status'=>false,
+                'message' => 'you have already save the job',
+            ]);
+        }
+
+        $savedJob = new SavedJob();
+        $savedJob->job_id = $id;
+        $savedJob->user_id = Auth::user()->id;
+        $savedJob->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'you have successfully saved the job.'
         ]);
     }
 }

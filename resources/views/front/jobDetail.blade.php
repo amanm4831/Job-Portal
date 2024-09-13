@@ -51,53 +51,92 @@
                                 {{-- <p>Variations of passages of lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing.</p> --}}
                             </div>
                             <div class="single_wrap">
-                                
+
                                 <ul>
                                     @if (!empty($jobDetails->responsibility))
-                                    <h4>Responsibility</h4>
+                                        <h4>Responsibility</h4>
                                         <p>{{ $jobDetails->responsibility }}</p>
                                     @endif
 
-                                    {{-- <li>Have sound knowledge of commercial activities.</li>
-                                <li>Leadership, analytical, and problem-solving abilities.</li>
-                                <li>Should have vast knowledge in IAS/ IFRS, Company Act, Income Tax, VAT.</li> --}}
+                                   
                                 </ul>
                             </div>
                             <div class="single_wrap">
-                                
+
                                 <ul>
                                     @if (!empty($jobDetails->qualification))
-                                    <h4>Qualifications</h4>
+                                        <h4>Qualifications</h4>
                                         <p>{{ $jobDetails->qualification }}</p>
                                     @endif
-                                    {{-- <li>Have sound knowledge of commercial activities.</li>
-                                <li>Leadership, analytical, and problem-solving abilities.</li>
-                                <li>Should have vast knowledge in IAS/ IFRS, Company Act, Income Tax, VAT.</li> --}}
                                 </ul>
                             </div>
                             <div class="single_wrap">
-                                
+
                                 @if (!empty($jobDetails->benefits))
-                                <h4>Benefits</h4>
+                                    <h4>Benefits</h4>
                                     <p>{{ $jobDetails->benefits }}</p>
                                 @endif
                             </div>
                             <div class="border-bottom"></div>
                             <div class="pt-3 text-end">
                                 @if (Auth::check())
-                                <a href="#" onclick="applyJob({{$jobDetails->id}})" class="btn btn-primary">Save</a>
+                                    <a href="#" onclick="applyJob({{ $jobDetails->id }})"
+                                        class="btn btn-primary">Save</a>
                                 @else
-                                <a href="javascript:void(0)" class="btn btn-primary disabled">Login To Save</a>
+                                    <a href="javascript:void(0)" class="btn btn-primary disabled">Login To Save</a>
                                 @endif
                                 {{-- <a href="#" class="btn btn-secondary">Save</a> --}}
                                 @if (Auth::check())
-                                <a href="#" onclick="applyJob({{$jobDetails->id}})" class="btn btn-primary">Apply</a>
+                                    <a href="#" onclick="applyJob({{ $jobDetails->id }})"
+                                        class="btn btn-primary">Apply</a>
                                 @else
-                                <a href="javascript:void(0)" class="btn btn-primary disabled">Login To Apply</a>
+                                    <a href="javascript:void(0)" class="btn btn-primary disabled">Login To Apply</a>
                                 @endif
                             </div>
                         </div>
                     </div>
+                    @if ($jobApplicants != null)
+                        @if (Auth::user())
+                            @if (Auth::user()->id == $jobDetails->user_id)
+                                <div class="card shadow border-0 mt-4">
+                                    <div class="job_details_header">
+                                        <div class="single_jobs white-bg d-flex justify-content-between">
+                                            <div class="jobs_left d-flex align-items-center">
+
+                                                <div class="jobs_conetent">
+
+                                                    <h4>Applicants Info</h4>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="descript_wrap white-bg">
+                                        <table class="table table-striped">
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Applied Date</th>
+                                            </tr>
+                                            @foreach ($jobApplicants as $applicant)
+                                                <tr>
+                                                    <td>{{ $applicant->user->name }}</td>
+                                                    <td>{{ $applicant->user->email }}</td>
+                                                    <td>{{ carbon\carbon::parse($applicant->applied_date)->format('d, M Y') }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </table>
+                                    </div>
+                                </div>
+                            @endif
+
+                        @endif
+                    @else
+                        <tr>
+                            <td colspan="3">"Applicants not found"</td>
+                        </tr>
+                    @endif
                 </div>
                 <div class="col-md-4">
                     <div class="card shadow border-0">
@@ -112,9 +151,9 @@
                                     </li>
                                     <li>Vacancy: <span>{{ $jobDetails->vacancy }} Position</span></li>
                                     @if (!empty($jobDetails->salary))
-                                    <li>Salary:<span>{{ $jobDetails->salary }} PA</span></li>
-                                        @endif
-                                    
+                                        <li>Salary:<span>{{ $jobDetails->salary }} PA</span></li>
+                                    @endif
+
                                     <li>Location: <span>{{ $jobDetails->location }}</span></li>
                                     <li>Job Nature: <span> {{ $jobDetails->jobtypes->name }}</span></li>
                                 </ul>
@@ -131,9 +170,9 @@
                                     <li>Name: <span>{{ $jobDetails->company_name }}</span></li>
                                     <li>Locaion: <span>{{ $jobDetails->company_location }}</span></li>
                                     @if (!empty($jobDetails->company_website))
-                                    <li>Webite: <span>{{ $jobDetails->company_website }}</span></li>
-                                        @endif
-                                    
+                                        <li>Webite: <span>{{ $jobDetails->company_website }}</span></li>
+                                    @endif
+
                                 </ul>
                             </div>
                         </div>
@@ -143,61 +182,57 @@
         </div>
     </section>
 @endsection
-
-
 @section('customjs')
-<script type="text/javascript">
-   function applyJob(id) {
-    if (confirm("Are you sure you want to apply for this job?")) {
-        $.ajax({
-            url: "{{ route('jobs.apply') }}",
-            type: 'POST',
-            data: {
-                id: id,
-                _token: '{{ csrf_token() }}'
-            },
-            dataType: 'json',
-            success: function(response) {
-                // Check if the response has a success or error message
-                if (response.status) {
-                    // Display success message
-                    displayMessage('success', response.message);
-                } else {
-                    // Display error message
-                    displayMessage('danger', response.message);
-                }
-            },
-            error: function(xhr) {
-                displayMessage('danger', 'An error occurred. Please try again later.');
+    <script type="text/javascript">
+        function applyJob(id) {
+            if (confirm("Are you sure you want to apply for this job?")) {
+                $.ajax({
+                    url: "{{ route('jobs.apply') }}",
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        // Check if the response has a success or error message
+                        if (response.status) {
+                            // Display success message
+                            displayMessage('success', response.message);
+                        } else {
+                            // Display error message
+                            displayMessage('danger', response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        displayMessage('danger', 'An error occurred. Please try again later.');
+                    }
+                });
             }
-        });
-    }
-}
+        }
 
-// Function to dynamically display messages
-function displayMessage(type, message) {
-    let messageContainer = document.getElementById('flash-message');
+        // Function to dynamically display messages
+        function displayMessage(type, message) {
+            let messageContainer = document.getElementById('flash-message');
 
-    // If there's already a flash message container, clear it and reuse it
-    if (!messageContainer) {
-        messageContainer = document.createElement('div');
-        messageContainer.id = 'flash-message';
-        document.body.prepend(messageContainer); // You can prepend this to a specific container too
-    }
+            // If there's already a flash message container, clear it and reuse it
+            if (!messageContainer) {
+                messageContainer = document.createElement('div');
+                messageContainer.id = 'flash-message';
+                document.body.prepend(messageContainer); // You can prepend this to a specific container too
+            }
 
-    messageContainer.innerHTML = `
+            messageContainer.innerHTML = `
         <div class="alert alert-${type} alert-dismissible fade show" role="alert">
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;
 
-    // Optionally reload the page after showing the message (if needed)
-    setTimeout(function() {
-        window.location.reload();
-    }, 3000); // Reload the page after 3 seconds
-}
-
-</script>
+            // Optionally reload the page after showing the message (if needed)
+            setTimeout(function() {
+                window.location.reload();
+            }, 3000); // Reload the page after 3 seconds
+        }
+    </script>
 @endsection
-

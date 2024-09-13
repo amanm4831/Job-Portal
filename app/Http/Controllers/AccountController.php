@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Job;
 use App\Models\JobApplication;
 use App\Models\JobTypes;
+use App\Models\SavedJob;
 use Auth;
 use File;
 use Hash;
@@ -367,6 +368,32 @@ class AccountController extends Controller
             ]);
         }
         JobApplication::find($request->id)->delete();
+        session()->flash('success', 'Job has been removed successfully.');
+        return response()->json([
+            'status'=>true,
+        ]);
+    }
+
+    public function savedJobs(){
+        // $jobApplications = JobApplication::where('user_id', Auth::user()->id)->with(['job', 'job.JobTypes', 'job.applications'])->paginate(10);
+        $savedJobs = SavedJob::where([
+            'user_id' => Auth::user()->id,
+        ])->with(['job', 'job.JobTypes', 'job.applications'])->orderBy('created_at', 'DESC')->paginate(10);
+        return view('front.account.job.saved-jobs', [
+            'savedJobs' => $savedJobs,
+        ]);
+    }
+
+    public function removeSavedJob(Request $request){
+        $savedJobs = SavedJob::where(['id'=> $request->id, 'user_id'=>Auth::user()->id])->first();
+
+        if($savedJobs == null){
+            session()->flash('error', 'Job not found');
+            return response()->json([
+                'status'=> false,
+            ]);
+        }
+        SavedJob::find($request->id)->delete();
         session()->flash('success', 'Job has been removed successfully.');
         return response()->json([
             'status'=>true,
