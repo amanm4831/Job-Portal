@@ -399,4 +399,35 @@ class AccountController extends Controller
             'status'=>true,
         ]);
     }
+
+    public function updatePassword(Request $request){
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required',
+            'new_password' => 'required',
+            'confirm_password' => 'required|same:new_password',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'errrors' => $validator->errors(),
+            ]);
+        }
+
+        if(Hash::make($request->old_password, Auth::user()->password)==false){
+            session()->flash('error', 'old password incorrect.');
+            return response()->json([
+                'status' => true,
+            ]);
+        }
+
+        $user = Auth::user();
+        $user->password = $request->new_passsword;
+        $user->save();
+
+        session()->flash('success', 'Password updated successully.');
+            return response()->json([
+                'status' => true,
+            ]);
+    }
 }

@@ -75,5 +75,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/remove-saved-job', [AccountController::class, 'removeSavedJob'])->name('account.removeSavedJob');
 
+    Route::post('/updatePassword', [AccountController::class, 'updatePassword'])->name('account.updatePassword');
+
 });
 
