@@ -10025,3 +10025,10 @@ footer .nav-link {
   background: #00D363 !important;
   color: #fff !important;
 }
+
+.dashboard{
+  height: 400px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}

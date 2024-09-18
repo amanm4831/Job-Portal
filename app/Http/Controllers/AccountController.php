@@ -151,12 +151,12 @@ class AccountController extends Controller
             session()->flash('success', 'Profile updated successfully.');
 
             return response()->json([
-                'status' => 'true',
+                'status' => true,
                 'errors' => [],
             ]);
         } else {
             return response()->json([
-                'status' => 'false',
+                'status' => false,
                 'errors' => $validator->errors(),
             ]);
         }
@@ -406,28 +406,31 @@ class AccountController extends Controller
             'new_password' => 'required',
             'confirm_password' => 'required|same:new_password',
         ]);
-
+    
         if($validator->fails()){
             return response()->json([
                 'status' => false,
-                'errrors' => $validator->errors(),
+                'errors' => $validator->errors(),
             ]);
         }
-
-        if(Hash::make($request->old_password, Auth::user()->password)==false){
-            session()->flash('error', 'old password incorrect.');
+    
+        // Check if the old password matches
+        if (!Hash::check($request->old_password, Auth::user()->password)) {
+            session()->flash('error', 'Old password is incorrect.');
             return response()->json([
-                'status' => true,
+                'status' => false, // Change to false for errors
             ]);
         }
-
+    
+        // Update the user's password
         $user = Auth::user();
-        $user->password = $request->new_passsword;
+        $user->password = Hash::make($request->new_password); // Hash the new password
         $user->save();
-
-        session()->flash('success', 'Password updated successully.');
-            return response()->json([
-                'status' => true,
-            ]);
+    
+        session()->flash('success', 'Password updated successfully.');
+        return response()->json([
+            'status' => true,
+        ]);
     }
+    
 }

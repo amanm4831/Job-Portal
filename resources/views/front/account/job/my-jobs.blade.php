@@ -77,7 +77,7 @@
                             </table>
                         </div>
                         <div class="mt-4">
-                            {{$jobs->links()}}
+                            {{$users->links()}}
                         </div>
                     </div>
                 </div> 

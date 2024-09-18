@@ -1,10 +1,12 @@
 <?php
 
-use App\Http\Controllers\JobsController;
+use App\Http\Controllers\admin\UserController;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JobsController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\admin\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,5 +79,13 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/updatePassword', [AccountController::class, 'updatePassword'])->name('account.updatePassword');
 
+});
+
+Route::group(['middleware'=>'checkRole'], function(){
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/users', [UserController::class, 'index'])->name('admin.users.list');
+    Route::get('/users/{id}', [UserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 });
 
